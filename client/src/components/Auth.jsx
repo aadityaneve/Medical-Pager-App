@@ -14,7 +14,6 @@ const initialState = {
 };
 
 const Auth = () => {
-
     const [form, setForm] = useState(initialState);
     const [isSignup, setIsSignup] = useState(true);
 
@@ -25,8 +24,8 @@ const Auth = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        console.log(form)
-    }
+        console.log(form);
+    };
 
     const switchMode = () => {
         setIsSignup((prevIsSignup) => !prevIsSignup);
@@ -37,7 +36,7 @@ const Auth = () => {
             <div className='auth__form-container_fields'>
                 <div className='auth__form-container_fields-content'>
                     <p>{isSignup ? 'Sign Up' : 'Sign In'}</p>
-                    <form onSubmit={() => {handleSubmit}}>
+                    <form onSubmit={handleSubmit}>
                         {isSignup && (
                             <div className='auth__form-container_fields-content_input'>
                                 <label htmlFor='fullName'>Full Name</label>
