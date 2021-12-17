@@ -2,11 +2,12 @@ const { connect } = require('getstream');
 const bcrypt = require('bcrypt');
 const StreamChat = require('stream-chat').StreamChat;
 const crypto = require('crypto');
+
 require('dotenv').config();
 
-const API_KEY = process.env.STREAM_API_KEY;
-const API_SECRET = process.env.STREAM_API_SECRET;
-const APP_ID = process.env.STREAM_APP_ID;
+const api_key = process.env.STREAM_API_KEY;
+const api_secret = process.env.STREAM_API_SECRET;
+const app_id = process.env.STREAM_APP_ID;
 
 const signup = async (req, res) => {
     try {
@@ -14,7 +15,7 @@ const signup = async (req, res) => {
 
         const userId = crypto.randomBytes(16).toString('hex');
 
-        const serverClient = connect(API_KEY, API_SECRET, APP_ID);
+        const serverClient = connect(api_key, api_secret, app_id);
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -28,9 +29,10 @@ const signup = async (req, res) => {
             hashedPassword,
             phoneNumber,
         });
-    } catch (e) {
-        console.log(e);
-        res.status(500).json({ message: e.message });
+    } catch (error) {
+        console.log(error);
+
+        res.status(500).json({ message: error });
     }
 };
 
@@ -38,37 +40,34 @@ const login = async (req, res) => {
     try {
         const { username, password } = req.body;
 
-        const serverClient = connect(API_KEY, API_SECRET, APP_ID);
-
-        const client = StreamChat.getInstance(API_KEY, API_SECRET);
+        const serverClient = connect(api_key, api_secret, app_id);
+        const client = StreamChat.getInstance(api_key, api_secret);
 
         const { users } = await client.queryUsers({ name: username });
 
-        if (!users.length) {
-            return res.status(400).json({ message: 'User Not Found.' });
-        }
+        if (!users.length)
+            return res.status(400).json({ message: 'User not found' });
 
         const success = await bcrypt.compare(password, users[0].hashedPassword);
 
         const token = serverClient.createUserToken(users[0].id);
 
         if (success) {
-            return res.status(200).json({
+            res.status(200).json({
                 token,
                 fullName: users[0].fullName,
                 username,
                 userId: users[0].id,
             });
         } else {
-            return res.status(500).json({ message: 'Incorrect Password.' });
+            res.status(500).json({ message: 'Incorrect password' });
         }
-    } catch (e) {
-        console.log(e);
-        res.status(500).json({ message: e.message });
+    } catch (error) {
+        ads;
+        console.log(error);
+
+        res.status(500).json({ message: error });
     }
 };
 
-module.exports = {
-    signup,
-    login,
-};
+module.exports = { signup, login };
